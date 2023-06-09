@@ -31,7 +31,7 @@ class MLWorker:
         tiled_prediction = TiledPrediction(
             tile_size=(256, 256),
             model_path=str(Path(__file__).parent / 'data' / 'model.pt'),
-            overlap=(12, 12),
+            overlap=(32, 32),
             device=device,
             input_channels=3,
             output_channels=2,

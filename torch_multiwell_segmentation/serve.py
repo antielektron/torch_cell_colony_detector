@@ -9,7 +9,7 @@ def main():
     parser.add_argument('-p', '--port', default=5006, type=int, help='Port to serve the application on')
     parser.add_argument('-a', '--address', default='0.0.0.0', type=str, help='Address to bind the application to')
     parser.add_argument('-s', '--show', default=False, action='store_true', help='Open the server in a browser after startup')
-    parser.add_argument('-w', '--websocket-origin', nargs='*', default=None, help='Hosts that can access the websocket')
+    parser.add_argument('-w', '--websocket-origin', nargs='*', default="*", help='Hosts that can access the websocket')
     args = parser.parse_args()
     routes = {
         '/': create_dashboard,
