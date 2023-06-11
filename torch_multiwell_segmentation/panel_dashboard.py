@@ -20,6 +20,8 @@ from .ml_worker import MLWorker
 # Initialize the worker
 ml_worker = MLWorker()
 
+
+# hacky css to make the file input look nicer and bigger
 custom_css = """
 
 .custom-file-input input[type=file]::before {
@@ -92,6 +94,7 @@ def create_dashboard():
     # Turn the DataFrame into a Panel widget
     df_widget = pn.widgets.DataFrame(df, name='Metrics', width_policy="auto", height_policy='max', autosize_mode='fit_columns')
 
+
     def df_to_excel(df):
         output = StringIO()
         df.to_csv(output, index=False)
@@ -106,52 +109,14 @@ def create_dashboard():
         label='Download Metrics'
     )
 
-    
-    #def get_result(result=None, input=None):
-    #    # This function just returns the result. It will be called by DynamicMap each time the result stream is updated.
-    #    if result is not None and input is not None:
-    #        height, width = result[0].shape
-    #        extents = (0, 0, width, height)
-    #        mask1 = np.zeros((input.shape[0], input.shape[1], 4), dtype=float)
-    #        mask2 = np.zeros((input.shape[0], input.shape[1], 4), dtype=float)
-    #        mask1[...,3] = 0
-    #        mask2[...,3] = 0
-    #
-    #
-    #        mask1[result[0] > 0.8, 0] = 0.5
-    #        mask1[result[0] > 0.8, 3] = 0.5
-    #        mask2[result[1] > 0.5, 1] = 0.5
-    #        mask2[result[1] > 0.5, 3] = 0.5
-    #
-    #        return hv.RGB(input, bounds=extents) * hv.RGB(mask1, bounds=extents) * hv.RGB(mask2, bounds=extents)
-    #
-    #
-    #    else:
-    #        extents = (0,0, 1, 1)
-    #    return hv.RGB(None, bounds=extents) * hv.RGB(None, bounds=extents) * hv.RGB(None, bounds=extents)
-    
-    ## Create a DynamicMap that calls get_result when the result stream is updated
-    #dynamic_map = hv.DynamicMap(get_result, streams=[result_stream, input_stream]).redim.range(x=(None, None), y=(None, None))
-
-    ## set the size of the map
-    #dynamic_map.opts(
-    #    width=600,
-    #    height=600,
-    #    framewise=True,
-    #    xaxis=None,
-    #    yaxis=None,
-    #)
-
-    # Define the widgets
-
     # multiple file upload
     file_input = FileInput(accept=".png,.jpg,.jpeg,.tiff,.tif", width=300, height=100, css_classes=["custom-file-input"], multiple=False)
     process_button = Button(name="Process")
 
     # create buttons to rotate/crop the image with unicode icons as names
-    rotate_left_button = Button(name="\u21BA", width_polix="max")
-    rotate_right_button = Button(name="\u21BB", width_polix="max")
-    crop_in_button = Button(name="\u002B", width_polix="max")
+    rotate_left_button = Button(name="rotate \u21BA", width_policy="max")
+    rotate_right_button = Button(name="rotate \u21BB", width_policy="max")
+    crop_in_button = Button(name="crop \u002B", width_policy="max")
 
     # put them in a row
     rotate_buttons = pn.Row(rotate_left_button, rotate_right_button, crop_in_button, width=300)
@@ -216,7 +181,7 @@ def create_dashboard():
 
     subplot_column = pn.GridBox(
         name="Subplots",
-        ncols=2,
+        ncols=2
     )
     
     def create_subplots(image, well_mask, cell_mask):
@@ -301,7 +266,7 @@ def create_dashboard():
 
             extents = (0, 0, img_crop.shape[1], img_crop.shape[0])
 
-            # overlay the well mask on the image, giving the combined it's own dimension
+            # overlay the well mask on the image
             img_crop = hv.RGB(img_crop, bounds=extents) * hv.RGB(well_mask_crop_rgba, bounds=extents) * hv.RGB(cell_mask_crop_rgba, bounds=extents)
 
             card = pn.Card(
@@ -313,7 +278,7 @@ def create_dashboard():
 
             # add a ok and discard button
             
-            ok = pn.widgets.Button(name="Ok", button_type="primary", width=100)
+            ok = pn.widgets.Button(name="add to metrics", button_type="primary", width=100)
             discard = pn.widgets.Button(name="Discard", button_type="danger", width=100)
           
             card.append(
@@ -324,8 +289,6 @@ def create_dashboard():
             )
 
             # on ok, the mean pixel value of the well is calculated and the well is added to the well dataframe
-            
-
             well_mean = np.sum(cell_mask_crop > 0.5).astype(np.float32) / np.sum((well_mask_crop > 0.5).astype(np.float32))
             
             def on_ok(event, i=i, fname=file_input.filename, well_mean=well_mean,df_widget=df_widget, ok=ok, discard=discard):
@@ -363,7 +326,10 @@ def create_dashboard():
 
         image = load_image(block_buttons=False)
         image = image.astype(np.float32)
+
+        # mean pool the image to reduce the size
         image = (image[::2, ::2] + image[1::2, ::2] + image[::2, 1::2] + image[1::2, 1::2]) / 4
+        
         image /= 255.0
         task_id = ml_worker.add_task(image)
         result_future = ml_worker.get_result_future(task_id)
@@ -386,6 +352,8 @@ def create_dashboard():
             df_widget,
             sizing_mode="stretch_both",
             margin=(10, 10, 10, 10),
+            width_policy="max",
+            height_policy="max"
         )
     )
 
