@@ -12,7 +12,7 @@ This project contains a pretrained ML Model to detect wells and cell colony in m
 pip install git+https://github.com/antielektron/torch_cell_colony_detector.git
 ```
 
-the model is served as a panel app, that you can run with
+the model is served as a [panel](https://panel.holoviz.org/) app, that you can run with
 
 ```bash
 multiwell_dashboard
@@ -39,7 +39,7 @@ If you want to train your own dataset, perform the following steps:
 * replace the images in [Training/cell_culture_plate_images](Training/cell_culture_plate_images) with your own images
 * clear the folder content of  X, Y and Z
 * run the notebook [DatasetGeneration.ipynb](Training/DatasetGeneration.ipynb)
-    * this notebook will randomly present you detected circle areas from potential wells and asks you whether they are wells or not. If you anwer with yes, the well will be saved and lebeled for the Training.
+    * this notebook will randomly present you detected circle areas from potential wells and asks you whether they are wells or not. the images will be labeled accordingly and saved for the training.
 * run the notebook [UNET-Training.ipynb](Training/UNET-Training.ipynb)
     * this notebook will train the model and save it
     * after that, copy the model generated in the same folder to [torch_multiwell_segmentation/data](torch_multiwell_segmentation/data)
