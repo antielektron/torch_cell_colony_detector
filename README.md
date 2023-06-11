@@ -2,7 +2,7 @@
 
 ![](img/demo.png)
 
-This project contains a pretrained ML Model to detect wells and cell colony in multiwell plates.
+This project contains a pretrained ML Model to detect wells and cell colonies in multiwell plates.
 
 > Note: for a simpler version of this software, that is only based on opencv and can be run completely client side in the browser, see: https://github.com/antielektron/cell_colony_detector
 
